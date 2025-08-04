@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loginMessage.style.color = 'black';
 
         try {
-            const response = await fetch('https://localhost:3443/api/login', {
+            const response = await fetch('https://task4-gous.onrender.com/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
