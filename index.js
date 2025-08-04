@@ -34,7 +34,7 @@ loginForm.addEventListener('submit', async (e) => {
     loginMessage.style.color = 'black';
 
     try {
-        const response = await fetch('https://task4-gous.onrender.com/api/users/login', {
+        const response = await fetch('https://task4-gous.onrender.com/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -70,7 +70,7 @@ loginForm.addEventListener('submit', async (e) => {
         registerMessage.style.color = 'black';
 
         try {
-            const response = await fetch('https://task4-gous.onrender.com/api/users/register', {
+            const response = await fetch('https://task4-gous.onrender.com/api/register', {
 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
