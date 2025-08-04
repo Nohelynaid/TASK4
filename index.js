@@ -23,37 +23,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // hanlde submit login
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+   // handle submit login
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
 
-        loginMessage.textContent = 'Attempting to log in...';
-        loginMessage.style.color = 'black';
+    loginMessage.textContent = 'Attempting to log in...';
+    loginMessage.style.color = 'black';
 
-        try {
-            const response = await fetch('https://task4-gous.onrender.com/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
+    try {
+        const response = await fetch('https://task4-gous.onrender.com/api/users/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
 
-            const data = await response.json();
+        const data = await response.json();
 
-            if (response.ok) {
-                loginMessage.textContent = 'Login successful';
-                loginMessage.style.color = 'green';
-
-            } else {
-                loginMessage.textContent = data.message || 'Login failed';
-                loginMessage.style.color = 'red';
-            }
-        } catch (error) {
-            loginMessage.textContent = 'Error connecting to server';
+        if (response.ok) {
+            loginMessage.textContent = 'Login successful';
+            loginMessage.style.color = 'green';
+            loginForm.reset();
+        } else {
+            loginMessage.textContent = data.message || 'Login failed';
             loginMessage.style.color = 'red';
         }
-    });
+    } catch (error) {
+        console.error('Login error:', error);
+        loginMessage.textContent = 'Error connecting to server';
+        loginMessage.style.color = 'red';
+    }
+});
+
 
     // handle submit register
     registerForm.addEventListener('submit', async (e) => {
