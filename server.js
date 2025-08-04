@@ -23,7 +23,7 @@ app.get('/api/hello', (req, res) => {
 });
 
 // Ruta de registro
-aapp.post('/api/register', async (req, res) => {
+app.post('/api/register', async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
