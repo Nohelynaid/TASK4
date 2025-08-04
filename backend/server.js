@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const db = require('./db');
-
+const PORT = process.env.PORT || 3000;
 dotenv.config();
 
 const app = express();
@@ -30,6 +30,8 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
+
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
+
