@@ -26,17 +26,35 @@ app.get('/api/hello', (req, res) => {
 app.post('/api/register', async (req, res) => {
   const { name, email, password } = req.body;
 
-  try {
-    const result = await db.query(
-      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
-      [name, email, password]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error('Error en /register:', err);
-    res.status(500).json({ error: 'Error al registrar usuario' });
-  }
-});
+ try {
+    const response = await fetch('https://task4-gous.onrender.com/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+    });
+
+    const text = await response.text(); // 👈 para poder ver qué te regresa realmente
+    let data;
+
+    try {
+        data = JSON.parse(text); // 👈 evita crasheo si no es JSON
+    } catch {
+        throw new Error('Server did not return JSON: ' + text);
+    }
+
+    if (response.ok) {
+        registerMessage.textContent = 'Registration successful.';
+        registerMessage.style.color = 'green';
+    } else {
+        registerMessage.textContent = data.message || 'Registration failed';
+        registerMessage.style.color = 'red';
+    }
+
+} catch (error) {
+    registerMessage.textContent = 'Error: ' + error.message;
+    registerMessage.style.color = 'red';
+}
+
 
 
 app.listen(PORT, () => {
