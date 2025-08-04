@@ -23,12 +23,13 @@ app.get('/api/hello', (req, res) => {
 });
 
 // Ruta de registro
-app.post('/api/register', async (req, res) => {
-  const { email, password } = req.body;
+aapp.post('/api/register', async (req, res) => {
+  const { name, email, password } = req.body;
+
   try {
     const result = await db.query(
-      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *',
-      [email, password]
+      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
+      [name, email, password]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -36,6 +37,7 @@ app.post('/api/register', async (req, res) => {
     res.status(500).json({ error: 'Error al registrar usuario' });
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
