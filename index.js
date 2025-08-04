@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         registerMessage.style.color = 'black';
 
         try {
-            const response = await fetch('https://localhost:3443/api/users/register', {
+            const response = await fetch('https://task4-gous.onrender.com/api/users/register', {
 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
