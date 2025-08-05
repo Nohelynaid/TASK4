@@ -49,20 +49,27 @@
     </div>
 
     <!-- Table -->
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped align-middle">
-        <thead class="table-light">
-          <tr>
-            <th><input type="checkbox" id="selectAll"></th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Last Login</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="userTableBody"></tbody>
-      </table>
-    </div>
+    <!-- Table with Filter -->
+<div class="mb-3 d-flex justify-content-between align-items-center">
+  <h5 class="mb-0">Users</h5>
+  <input type="text" id="filterInput" class="form-control w-25" placeholder="Filter users">
+</div>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-striped align-middle">
+    <thead class="table-light">
+      <tr>
+        <th><input type="checkbox" id="selectAll"></th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Last Login</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="userTableBody"></tbody>
+  </table>
+</div>
+
 
     <div id="adminMessage" class="mt-2 text-danger"></div>
   </div>
