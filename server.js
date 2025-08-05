@@ -88,7 +88,7 @@ app.get('/api/users', async (req, res) => {
 
 // Block users
 app.put('/api/users/block', async (req, res) => {
-    const { ids } = req.body;
+    const { userIds } = req.body;
     try {
         await db.query('UPDATE users SET is_blocked = TRUE WHERE id = ANY($1)', [ids]);
         res.json({ message: 'Users blocked successfully' });
@@ -100,7 +100,7 @@ app.put('/api/users/block', async (req, res) => {
 
 // Unblock users
 app.put('/api/users/unblock', async (req, res) => {
-    const { ids } = req.body;
+    const { userIds } = req.body;
     try {
         await db.query('UPDATE users SET is_blocked = FALSE WHERE id = ANY($1)', [ids]);
         res.json({ message: 'Users unblocked successfully' });
@@ -112,7 +112,7 @@ app.put('/api/users/unblock', async (req, res) => {
 
 // Delete users
 app.delete('/api/users/delete', async (req, res) => {
-    const { ids } = req.body;
+    const { userIds } = req.body;
     try {
         await db.query('DELETE FROM users WHERE id = ANY($1)', [ids]);
         res.json({ message: 'Users deleted successfully' });
