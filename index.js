@@ -18,17 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const blockBtn = document.getElementById('blockUsers');
     const unblockBtn = document.getElementById('unblockUsers');
     const deleteBtn = document.getElementById('deleteUsers');
-
-    // Filtro de usuarios
-document.getElementById('filterInput').addEventListener('input', (e) => {
-  const search = e.target.value.toLowerCase();
-  const filtered = users.filter(user =>
-    user.name.toLowerCase().includes(search) ||
-    user.email.toLowerCase().includes(search)
-  );
-  renderUsers(filtered);
-});
-
+    const logoutBtn = document.getElementById('logoutBtn');
 
     let users = [];
 
@@ -109,6 +99,15 @@ document.getElementById('filterInput').addEventListener('input', (e) => {
         loadUsers();
     }
 
+    // Logout
+    logoutBtn.addEventListener('click', () => {
+        adminSection.classList.add('d-none');
+        loginSection.classList.remove('d-none');
+        loginForm.reset();
+        registerForm.reset();
+        document.getElementById('filterInput').value = '';
+    });
+
     // Load users
     async function loadUsers() {
         try {
@@ -128,23 +127,38 @@ document.getElementById('filterInput').addEventListener('input', (e) => {
 
     // Render table
     function renderUsers(filteredUsers = users) {
-  userTableBody.innerHTML = '';
-  filteredUsers.forEach(user => {
-    userTableBody.innerHTML += `
-      <tr>
-        <td><input type="checkbox" class="userCheckbox" value="${user.id}"></td>
-        <td>${user.name}</td>
-        <td>${user.email}</td>
-        <td>
-          ${user.last_login ? formatTime(user.last_login) : 'N/A'}
-          ${user.last_login ? `<div class="activity-bar ms-2"></div>` : ''}
-        </td>
-        <td>${user.is_blocked ? 'Blocked' : 'Active'}</td>
-      </tr>
-    `;
-  });
-}
+        tbody.innerHTML = '';
+        filteredUsers.forEach(user => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><input type="checkbox" class="userCheckbox" value="${user.id}"></td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        ${user.last_login ? formatTime(user.last_login) : 'N/A'}
+                        ${user.last_login ? `<div class="activity-bar ms-2"></div>` : ''}
+                    </td>
+                    <td>${user.is_blocked ? 'Blocked' : 'Active'}</td>
+                </tr>
+            `;
+        });
+    }
 
+    // Format timestamp
+    function formatTime(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleString();
+    }
+
+    // Filtro de usuarios
+    document.getElementById('filterInput').addEventListener('input', (e) => {
+        const search = e.target.value.toLowerCase();
+        const filtered = users.filter(user =>
+            user.name.toLowerCase().includes(search) ||
+            user.email.toLowerCase().includes(search)
+        );
+        renderUsers(filtered);
+    });
 
     // Select all
     selectAllCheckbox.addEventListener('change', () => {
