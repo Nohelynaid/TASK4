@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let users = [];
 
-    
     async function loadUsers() {
         try {
             const response = await fetch('https://task4-gous.onrender.com/api/users');
@@ -37,14 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${user.name}</td>
                 <td>${user.email}</td>
                 <td>${user.last_login || 'N/A'}</td>
-                <td>${user.status}</td>
+                <td>${user.is_blocked ? 'Blocked' : 'Active'}</td>
             `;
 
             tbody.appendChild(tr);
         });
     }
 
-    // Seleccionar todos
+    // Select all checkboxes
     selectAllCheckbox.addEventListener('change', () => {
         const checkboxes = document.querySelectorAll('.userCheckbox');
         checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
@@ -55,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .map(checkbox => checkbox.value);
     }
 
-    // Acción común
+    // Perform block/unblock
     async function performAction(action) {
         const selectedIds = getSelectedUserIds();
 
@@ -68,14 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`https://task4-gous.onrender.com/api/users/${action}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userIds: selectedIds })
+                body: JSON.stringify({ ids: selectedIds })  // ✅ FIXED
             });
 
             const data = await response.json();
 
             if (response.ok) {
                 statusMessage.textContent = `Users ${action}ed successfully.`;
-                await loadUsers(); // recargar lista
+                await loadUsers(); // reload
             } else {
                 statusMessage.textContent = data.message || `Failed to ${action} users.`;
             }
@@ -87,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     blockBtn.addEventListener('click', () => performAction('block'));
     unblockBtn.addEventListener('click', () => performAction('unblock'));
+
+    // Delete action
     deleteBtn.addEventListener('click', async () => {
         const selectedIds = getSelectedUserIds();
 
@@ -99,14 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('https://task4-gous.onrender.com/api/users/delete', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userIds: selectedIds })
+                body: JSON.stringify({ ids: selectedIds })  // ✅ FIXED
             });
 
             const data = await response.json();
 
             if (response.ok) {
                 statusMessage.textContent = 'Users deleted successfully.';
-                await loadUsers(); // recargar lista
+                await loadUsers(); // reload
             } else {
                 statusMessage.textContent = data.message || 'Failed to delete users.';
             }
@@ -116,5 +117,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    loadUsers(); // al cargar la página
+    loadUsers(); // Load when page is ready
 });
