@@ -37,6 +37,52 @@ app.post('/api/register', async (req, res) => {
         res.status(500).json({ error: 'Error al registrar usuario' });
     }
 });
+// Obtener todos los usuarios
+app.get('/api/users', async (req, res) => {
+    try {
+        const result = await db.query('SELECT id, name, email, is_blocked, last_login FROM users ORDER BY last_login DESC');
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error al obtener usuarios:', err);
+        res.status(500).json({ error: 'Error al obtener usuarios' });
+    }
+});
+
+// Bloquear usuarios
+app.post('/api/users/block', async (req, res) => {
+    const { ids } = req.body; // array de IDs
+    try {
+        await db.query('UPDATE users SET is_blocked = TRUE WHERE id = ANY($1)', [ids]);
+        res.json({ message: 'Usuarios bloqueados' });
+    } catch (err) {
+        console.error('Error al bloquear:', err);
+        res.status(500).json({ error: 'Error al bloquear usuarios' });
+    }
+});
+
+// Desbloquear usuarios
+app.post('/api/users/unblock', async (req, res) => {
+    const { ids } = req.body;
+    try {
+        await db.query('UPDATE users SET is_blocked = FALSE WHERE id = ANY($1)', [ids]);
+        res.json({ message: 'Usuarios desbloqueados' });
+    } catch (err) {
+        console.error('Error al desbloquear:', err);
+        res.status(500).json({ error: 'Error al desbloquear usuarios' });
+    }
+});
+
+// Eliminar usuarios
+app.post('/api/users/delete', async (req, res) => {
+    const { ids } = req.body;
+    try {
+        await db.query('DELETE FROM users WHERE id = ANY($1)', [ids]);
+        res.json({ message: 'Usuarios eliminados' });
+    } catch (err) {
+        console.error('Error al eliminar:', err);
+        res.status(500).json({ error: 'Error al eliminar usuarios' });
+    }
+});
 
 
 app.listen(PORT, () => {
