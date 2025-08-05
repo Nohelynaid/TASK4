@@ -80,9 +80,12 @@ loginForm.addEventListener('submit', async (e) => {
             const data = await response.json();
 
             if (response.ok) {
-                registerMessage.textContent = 'Registration successful. You can now log in.';
-                registerMessage.style.color = 'green';
-                registerForm.reset();
+    loginMessage.textContent = 'Login successful';
+    loginMessage.style.color = 'green';
+    loginForm.reset();
+    window.location.href = '/admin.html';
+}
+
             } else {
                 registerMessage.textContent = data.message || 'Registration failed';
                 registerMessage.style.color = 'red';
