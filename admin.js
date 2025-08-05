@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const tbody = document.querySelector('#userTable tbody');
+    const tbody = document.getElementById('userTableBody'); 
     const selectAllCheckbox = document.getElementById('selectAll');
     const blockBtn = document.getElementById('blockBtn');
     const unblockBtn = document.getElementById('unblockBtn');
