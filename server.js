@@ -90,7 +90,7 @@ app.get('/api/users', async (req, res) => {
 app.put('/api/users/block', async (req, res) => {
     const { userIds } = req.body;
     try {
-        await db.query('UPDATE users SET is_blocked = TRUE WHERE id = ANY($1)', [ids]);
+        await db.query('UPDATE users SET is_blocked = TRUE WHERE id = ANY($1)', [userIds]);
         res.json({ message: 'Users blocked successfully' });
     } catch (err) {
         console.error('Error blocking users:', err);
@@ -102,7 +102,7 @@ app.put('/api/users/block', async (req, res) => {
 app.put('/api/users/unblock', async (req, res) => {
     const { userIds } = req.body;
     try {
-        await db.query('UPDATE users SET is_blocked = FALSE WHERE id = ANY($1)', [ids]);
+        await db.query('UPDATE users SET is_blocked = FALSE WHERE id = ANY($1)', [userIds]);
         res.json({ message: 'Users unblocked successfully' });
     } catch (err) {
         console.error('Error unblocking users:', err);
@@ -114,7 +114,7 @@ app.put('/api/users/unblock', async (req, res) => {
 app.delete('/api/users/delete', async (req, res) => {
     const { userIds } = req.body;
     try {
-        await db.query('DELETE FROM users WHERE id = ANY($1)', [ids]);
+        await db.query('DELETE FROM users WHERE id = ANY($1)', [userIds]);
         res.json({ message: 'Users deleted successfully' });
     } catch (err) {
         console.error('Error deleting users:', err);
