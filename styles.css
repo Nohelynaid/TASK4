@@ -98,7 +98,7 @@ button {
   position: absolute;
   top: 0;
   left: 0;
-  animation: pulse 2s infinite ease-in-out;
+  
 }
 
 @keyframes pulse {
