@@ -19,6 +19,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const unblockBtn = document.getElementById('unblockUsers');
     const deleteBtn = document.getElementById('deleteUsers');
 
+    // Filtro de usuarios
+document.getElementById('filterInput').addEventListener('input', (e) => {
+  const search = e.target.value.toLowerCase();
+  const filtered = users.filter(user =>
+    user.name.toLowerCase().includes(search) ||
+    user.email.toLowerCase().includes(search)
+  );
+  renderUsers(filtered);
+});
+
+
     let users = [];
 
     // Show Register Form
@@ -116,20 +127,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Render table
-    function renderUsers() {
-        tbody.innerHTML = '';
-        users.forEach(user => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><input type="checkbox" class="userCheckbox" value="${user.id}"></td>
-                <td>${user.name}</td>
-                <td>${user.email}</td>
-                <td>${user.last_login || 'N/A'}</td>
-                <td>${user.status}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
+    function renderUsers(filteredUsers = users) {
+  userTableBody.innerHTML = '';
+  filteredUsers.forEach(user => {
+    userTableBody.innerHTML += `
+      <tr>
+        <td><input type="checkbox" class="userCheckbox" value="${user.id}"></td>
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>
+          ${user.last_login ? formatTime(user.last_login) : 'N/A'}
+          ${user.last_login ? `<div class="activity-bar ms-2"></div>` : ''}
+        </td>
+        <td>${user.is_blocked ? 'Blocked' : 'Active'}</td>
+      </tr>
+    `;
+  });
+}
+
 
     // Select all
     selectAllCheckbox.addEventListener('change', () => {
