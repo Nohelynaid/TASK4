@@ -23,38 +23,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // handle submit login
     loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
 
-        loginMessage.textContent = 'Attempting to log in...';
-        loginMessage.style.color = 'black';
+    loginMessage.textContent = 'Attempting to log in...';
+    loginMessage.style.color = 'black';
 
-        try {
-            const response = await fetch('https://task4-gous.onrender.com/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
+    try {
+        const response = await fetch('https://task4-gous.onrender.com/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
 
-            const data = await response.json();
+        const data = await response.json();
 
-            if (response.ok) {
-                loginMessage.textContent = 'Login successful';
-                loginMessage.style.color = 'green';
-                loginForm.reset();
-                window.location.href = '/admin.html'; // ✅ aquí rediriges solo si login fue exitoso
-            } else {
-                loginMessage.textContent = data.message || 'Login failed';
-                loginMessage.style.color = 'red';
-            }
-        } catch (error) {
-            console.error('Login error:', error);
-            loginMessage.textContent = 'Error connecting to server';
+        if (response.ok) {
+            loginMessage.textContent = 'Login successful';
+            loginMessage.style.color = 'green';
+            loginForm.reset();
+            setTimeout(() => {
+                window.location.href = 'admin.html';
+            }, 1000); 
+        } else {
+            loginMessage.textContent = data.message || 'Login failed';
             loginMessage.style.color = 'red';
         }
-    });
+    } catch (error) {
+        console.error('Login error:', error);
+        loginMessage.textContent = 'Error connecting to server';
+        loginMessage.style.color = 'red';
+    }
+});
+
 
     // handle submit register
     registerForm.addEventListener('submit', async (e) => {
