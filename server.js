@@ -8,21 +8,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-
-// Servir archivos estáticos
 app.use(express.static(__dirname));
 
-// Ruta principal para el frontend
+// Main route (serves frontend)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Ruta de prueba
+// Test route
 app.get('/api/hello', (req, res) => {
-    res.json({ message: 'Servidor conectado correctamente' });
+    res.json({ message: 'Server is running correctly' });
 });
 
-// Ruta de registro
+// User registration
 app.post('/api/register', async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -33,58 +31,97 @@ app.post('/api/register', async (req, res) => {
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
-        console.error('Error en /register:', err);
-        res.status(500).json({ error: 'Error al registrar usuario' });
+        if (err.code === '23505') { // unique constraint violation
+            res.status(400).json({ message: 'Email is already registered' });
+        } else {
+            console.error('Error in /register:', err);
+            res.status(500).json({ error: 'Failed to register user' });
+        }
     }
 });
-// Obtener todos los usuarios
+
+// User login
+app.post('/api/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const result = await db.query(
+            'SELECT * FROM users WHERE email = $1 AND password = $2',
+            [email, password]
+        );
+
+        const user = result.rows[0];
+
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        if (user.is_blocked) {
+            return res.status(403).json({ message: 'Your account is blocked' });
+        }
+
+        // Update last login time
+        await db.query(
+            'UPDATE users SET last_login = NOW() WHERE id = $1',
+            [user.id]
+        );
+
+        res.json({ message: 'Login successful', userId: user.id });
+    } catch (err) {
+        console.error('Error in /login:', err);
+        res.status(500).json({ error: 'Login failed' });
+    }
+});
+
+// Get all users
 app.get('/api/users', async (req, res) => {
     try {
-        const result = await db.query('SELECT id, name, email, is_blocked, last_login FROM users ORDER BY last_login DESC');
+        const result = await db.query(
+            'SELECT id, name, email, is_blocked, last_login FROM users ORDER BY last_login DESC'
+        );
         res.json(result.rows);
     } catch (err) {
-        console.error('Error al obtener usuarios:', err);
-        res.status(500).json({ error: 'Error al obtener usuarios' });
+        console.error('Error fetching users:', err);
+        res.status(500).json({ error: 'Failed to fetch users' });
     }
 });
 
-// Bloquear usuarios
-app.post('/api/users/block', async (req, res) => {
-    const { ids } = req.body; // array de IDs
+// Block users
+app.put('/api/users/block', async (req, res) => {
+    const { ids } = req.body;
     try {
         await db.query('UPDATE users SET is_blocked = TRUE WHERE id = ANY($1)', [ids]);
-        res.json({ message: 'Usuarios bloqueados' });
+        res.json({ message: 'Users blocked successfully' });
     } catch (err) {
-        console.error('Error al bloquear:', err);
-        res.status(500).json({ error: 'Error al bloquear usuarios' });
+        console.error('Error blocking users:', err);
+        res.status(500).json({ error: 'Failed to block users' });
     }
 });
 
-// Desbloquear usuarios
-app.post('/api/users/unblock', async (req, res) => {
+// Unblock users
+app.put('/api/users/unblock', async (req, res) => {
     const { ids } = req.body;
     try {
         await db.query('UPDATE users SET is_blocked = FALSE WHERE id = ANY($1)', [ids]);
-        res.json({ message: 'Usuarios desbloqueados' });
+        res.json({ message: 'Users unblocked successfully' });
     } catch (err) {
-        console.error('Error al desbloquear:', err);
-        res.status(500).json({ error: 'Error al desbloquear usuarios' });
+        console.error('Error unblocking users:', err);
+        res.status(500).json({ error: 'Failed to unblock users' });
     }
 });
 
-// Eliminar usuarios
-app.post('/api/users/delete', async (req, res) => {
+// Delete users
+app.delete('/api/users/delete', async (req, res) => {
     const { ids } = req.body;
     try {
         await db.query('DELETE FROM users WHERE id = ANY($1)', [ids]);
-        res.json({ message: 'Usuarios eliminados' });
+        res.json({ message: 'Users deleted successfully' });
     } catch (err) {
-        console.error('Error al eliminar:', err);
-        res.status(500).json({ error: 'Error al eliminar usuarios' });
+        console.error('Error deleting users:', err);
+        res.status(500).json({ error: 'Failed to delete users' });
     }
 });
 
-
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
